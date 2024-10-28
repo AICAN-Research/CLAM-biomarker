@@ -78,7 +78,7 @@ class CLAM_SB(nn.Module):
     def __init__(self, gate = True, size_arg = "small", dropout = 0., k_sample=8, n_classes=2,
         instance_loss_fn=nn.CrossEntropyLoss(), subtyping=False, embed_dim=1024):
         super().__init__()
-        self.size_dict = {"small": [embed_dim, 512, 256], "big": [embed_dim, 512, 384]}
+        self.size_dict = {"small": [embed_dim, 512, 256], "big": [embed_dim, 512, 384], "mini128": [embed_dim, 512, 128], "miniLayer": [embed_dim, 512,256,128], "microLayer":[embed_dim,512,256,128,64], "nanoLayer":[embed_dim,512,128,64,32], "picoLayer":[embed_dim,512,128,32,16]}
         size = self.size_dict[size_arg]
         fc = [nn.Linear(size[0], size[1]), nn.ReLU(), nn.Dropout(dropout)]
         if gate:
@@ -184,7 +184,7 @@ class CLAM_MB(CLAM_SB):
     def __init__(self, gate = True, size_arg = "small", dropout = 0., k_sample=8, n_classes=2,
         instance_loss_fn=nn.CrossEntropyLoss(), subtyping=False, embed_dim=1024):
         nn.Module.__init__(self)
-        self.size_dict = {"small": [embed_dim, 512, 256], "big": [embed_dim, 512, 384]}
+        self.size_dict = {"small": [embed_dim, 512, 256], "big": [embed_dim, 512, 384],"mini128": [embed_dim, 512, 128], "miniLayer": [embed_dim, 512,256,128], "microLayer":[embed_dim,512,256,128,64],"nanoLayer":[embed_dim,512,128,64,32], "picoLayer":[embed_dim,512,128,32,16]}
         size = self.size_dict[size_arg]
         fc = [nn.Linear(size[0], size[1]), nn.ReLU(), nn.Dropout(dropout)]
         if gate:

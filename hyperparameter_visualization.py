@@ -6,9 +6,10 @@ import sqlite3
 import numpy as np
 from optuna.importance import get_param_importances
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+import shutil
 
-def visualize_study(trial_id):
-    study_name = get_study_name(trial_id) # 5,6
+def visualize_study(study_id):
+    study_name = get_study_name(study_id) # 5,6
     study = optuna.load_study(study_name=study_name, storage="sqlite:///example.db")
 
     param_importances = get_param_importances(study)
@@ -17,13 +18,14 @@ def visualize_study(trial_id):
     for param, importance in param_importances.items():
         print(f"Hyperparameter: {param}, Importance: {importance}")
 
+    print(f"Best trial is  {study.best_trial.number} with value {study.best_value} . Starttime : {study.best_trial.datetime_start}")
+    print(f"The parameters are : {study.best_params}")
 
-def get_study_name(trial_id):
+
+def get_study_name(study_id):
 
     conn = sqlite3.connect('example.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT study_id FROM trials WHERE trial_id = ?',  (trial_id,))
-    study_id = cursor.fetchone()[0]
     cursor.execute('SELECT study_name FROM studies WHERE study_id = ?', (study_id,))
     study_name = cursor.fetchone()[0]
     conn.close()
@@ -34,6 +36,7 @@ def get_study_name(trial_id):
 def parse_metrics(log_dir, weights=(0.8, 0.2)):
     best_weighted_mean = 0
     best_trial = None
+    delete = True
 
     event_files = []
     for dirpath, _, filenames in os.walk(log_dir):
@@ -45,23 +48,31 @@ def parse_metrics(log_dir, weights=(0.8, 0.2)):
         event_accumulator = EventAccumulator(event_file)
         event_accumulator.Reload()
 
-        # Get the scalar values for each class
-        class_0_acc = event_accumulator.Scalars('final/val_class_0_acc')
-        class_1_acc = event_accumulator.Scalars('final/val_class_1_acc')
+        if len(event_accumulator.Scalars('val/loss')) > 102:
+        # if True:
+            delete = False
 
-        if class_0_acc and class_1_acc:
-            # Assuming you want to use the latest values
-            latest_class_0_acc = max(scalar.value for scalar in class_0_acc)
-            latest_class_1_acc = max(scalar.value for scalar in class_1_acc)
 
-            # Compute the weighted mean
-            weighted_mean = (weights[0] * latest_class_0_acc +
-                             weights[1] * latest_class_1_acc)
+            # Get the scalar values for each class
+            class_0_acc = event_accumulator.Scalars('final/val_class_0_acc')
+            class_1_acc = event_accumulator.Scalars('final/val_class_1_acc')
 
-            # Update the best weighted mean
-            if weighted_mean > best_weighted_mean:
-                best_weighted_mean = weighted_mean
-                best_trial = idx
+            if class_0_acc and class_1_acc:
+                # Assuming you want to use the latest values
+                latest_class_0_acc = max(scalar.value for scalar in class_0_acc)
+                latest_class_1_acc = max(scalar.value for scalar in class_1_acc)
+
+                # Compute the weighted mean
+                weighted_mean = (weights[0] * latest_class_0_acc +
+                                 weights[1] * latest_class_1_acc)
+
+                # Update the best weighted mean
+                if weighted_mean > best_weighted_mean:
+                    best_weighted_mean = weighted_mean
+                    best_trial = idx
+    # if delete: # (delete all models that have only run for 101 epochs )
+    #     shutil.rmtree(log_dir)
+    # #     # print(log_dir)
 
     return best_weighted_mean
 
@@ -126,28 +137,29 @@ def extract_final_scores(event_file, metrics, metrics_data):
 if __name__ == "__main__":
     ''' Visualize hyperparameter importance of a study '''
 
-    # trial_id = 5 #5,6
-    # visualize_study(trial_id)
+    # study_id = 12 #12,13
+    # visualize_study(study_id)
 
     ''' Show top 10 experiments '''
 
-    root_dir = Path(r'/home/utes/workspace/CLAM/results')
-    data = []
-
-    for folder in Path(root_dir).iterdir():
-        try:
-            weighted_mean =parse_metrics(folder,weights=(0.8, 0.2) )
-            # print(f'{folder.stem} has weighted mean : {weighted_mean}' )
-            data.append({'folder_name': folder.stem, 'weighted_mean': weighted_mean})
-        except:
-            continue
-
-    df = pd.DataFrame(data)
-    top_10 = df.nlargest(10, 'weighted_mean')
-
-    print(top_10)
+    # root_dir = Path(r'/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/256')
+    # data = []
+    #
+    # for folder in Path(root_dir).iterdir():
+    #     try:
+    #         weighted_mean =parse_metrics(folder,weights=(0.8, 0.2) )
+    #         # print(f'{folder.stem} has weighted mean : {weighted_mean}' )
+    #         data.append({'folder_name': folder.stem, 'weighted_mean': weighted_mean})
+    #     except:
+    #         continue
+    #
+    # df = pd.DataFrame(data)
+    # top_10 = df.nlargest(30, 'weighted_mean')
+    # pd.set_option('display.max_rows', None)
+    # print(top_10)
 
     ''' Caclculate mean and standard deviation of selected model'''
-    # root_dir = '/home/utes/workspace/CLAM/results/clam_sb080824_041741_s1'
-    # final_scores(root_dir)
+    root_dir = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/256/clam_sb220924_082605_s1'
+    final_scores(root_dir)
+
 

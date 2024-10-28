@@ -9,8 +9,9 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
     adjust weights according to class per sample distribution  
     study can be run with multiple instances if study_name is set to existing name      """
 
-model = 'clam_sb'
+model = 'clam_mb'
 gpu = 0
+size = '256'
 
 def get_date_time():
     curr_date = "".join(date.today().strftime("%d/%m").split("/")) + date.today().strftime("%Y")[2:]
@@ -44,6 +45,8 @@ def parse_metrics(log_dir, weights=(0.8, 0.2)):
             # Compute the weighted mean
             weighted_mean = (weights[0] * latest_class_0_acc +
                              weights[1] * latest_class_1_acc)
+            if len(event_accumulator.Scalars('val/loss')) > 102:
+                weighted_mean += 1
 
             # Update the best weighted mean
             if weighted_mean > best_weighted_mean:
@@ -65,26 +68,23 @@ def run_training_script(args):
         "--model_type", args.model_type,
         "--exp_code", args.exp_code,
         "--model_size", str(args.model_size),
+        "--bag_weight", str(args.bag_weight),
+        "--B", str(args.B),
         "--log_data",
         "--weighted_sample",
         "--early_stopping",
+        "--results_dir", f"/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/{size}",
 
     ]
 
-    # Additional arguments if model_type is 'mil'
-    if args.model_type == 'mil':
+    if args.inst_loss:
         command.extend([
-            "--bag_weight", str(args.bag_weight),
-            "--B", str(args.B)
+            "--inst_loss", args.inst_loss,
         ])
-        if args.inst_loss:
-            command.extend([
-                "--inst_loss", args.inst_loss,
-            ])
-        if str(args.no_inst_cluster):
-            command.extend([
-                "--no_inst_cluster",
-            ])
+    if str(args.no_inst_cluster):
+        command.extend([
+            "--no_inst_cluster",
+        ])
 
     # Run the script
     env = os.environ.copy()
@@ -101,28 +101,21 @@ def run_training_script(args):
 
 def objective(trial):
     # Define the search space
-    lr = trial.suggest_float('lr', 1e-5, 1e-2, log=True)
-    reg = trial.suggest_float('reg', 1e-6, 1e-3, log=True)
+    lr = trial.suggest_float('lr', 1e-5, 1e-3, log=True)
+    reg = trial.suggest_float('reg', 1e-6, 1e-4, log=True)
     opt = trial.suggest_categorical('opt', ['adam', 'sgd'])
     drop_out = trial.suggest_float('drop_out', 0.0, 0.5)
     bag_loss = trial.suggest_categorical('bag_loss', ['svm', 'ce'])
-    # model_type = trial.suggest_categorical('model_type', ['clam_sb', 'clam_mb', 'mil'])
     model_type = f'{model}'
-    model_size = trial.suggest_categorical('model_size', ['small', 'big'])
-
+    model_size = trial.suggest_categorical('model_size', ['small', 'big','mini128','miniLayer','microLayer','nanoLayer', 'picoLayer']) # big, small, mini128, miniLayer, microLayer,'nanoLayer', 'picoLayer'
+    no_inst_cluster = trial.suggest_categorical('no_inst_cluster', [True, False])
+    inst_loss = trial.suggest_categorical('inst_loss', ['svm', 'ce', None])
+    bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0)
+    B = trial.suggest_categorical('B', [8, 32, 64, 128])
     curr_date, curr_time = get_date_time()
     exp_code = (model_type + curr_date + "_" + curr_time)
 
-    # Additional hyperparameters for 'mil' model_type
-    no_inst_cluster = None
-    inst_loss = None
-    bag_weight = None
-    B = None
-    if model_type == 'mil':
-        no_inst_cluster = trial.suggest_categorical('no_inst_cluster', [True, False])
-        inst_loss = trial.suggest_categorical('inst_loss', ['svm', 'ce', None])
-        bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0)
-        B = trial.suggest_int('B', 4, 12)
+
 
     # Setup args namespace
     args = argparse.Namespace(lr=lr, reg=reg, opt=opt, drop_out=drop_out, bag_loss=bag_loss,
@@ -131,7 +124,7 @@ def objective(trial):
 
 
     # Define the log directory for TensorBoard logs
-    log_dir = f"./results/{exp_code}_s1"
+    log_dir = f"/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/{size}/{exp_code}_s1"
 
     run_training_script(args)
     metric = parse_metrics(log_dir)
@@ -144,8 +137,8 @@ def objective(trial):
 
 if __name__ == "__main__":
     curr_date, _ = get_date_time()
-    # study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name=(model + "_max_weighted_acc_" + curr_date), load_if_exists=True)
-    study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name='clam_sb_max_weighted_acc_060824', load_if_exists=True)
+    # study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name=(model + "_256_max_weighted_acc_" + curr_date), load_if_exists=True)
+    study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name='clam_mb_256_max_weighted_acc_160924', load_if_exists=True)
     study.optimize(objective, n_trials=100)
 
     # Print the best found parameters

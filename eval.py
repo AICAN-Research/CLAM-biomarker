@@ -28,7 +28,7 @@ parser.add_argument('--models_exp_code', type=str, default=None,
                     help='experiment code to load trained models (directory under results_dir containing model checkpoints')
 parser.add_argument('--splits_dir', type=str, default=None,
                     help='splits directory, if using custom splits other than what matches the task (default: None)')
-parser.add_argument('--model_size', type=str, choices=['small', 'big'], default='small', 
+parser.add_argument('--model_size', type=str, choices=['small', 'big','mini128','miniLayer','microLayer','nanoLayer', 'picoLayer'], default='small',
                     help='size of model (default: small)')
 parser.add_argument('--model_type', type=str, choices=['clam_sb', 'clam_mb', 'mil'], default='clam_sb', 
                     help='type of model (default: clam_sb)')
@@ -46,7 +46,7 @@ args = parser.parse_args()
 
 device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-args.save_dir = os.path.join('./eval_results', 'EVAL_' + str(args.save_exp_code))
+args.save_dir = str(args.save_exp_code)
 args.models_dir = os.path.join(args.results_dir, str(args.models_exp_code))
 
 os.makedirs(args.save_dir, exist_ok=True)
@@ -65,7 +65,7 @@ settings = {'task': args.task,
             'drop_out': args.drop_out,
             'model_size': args.model_size}
 
-with open(args.save_dir + '/eval_experiment_{}.txt'.format(args.save_exp_code), 'w') as f:
+with open(args.save_dir + '/eval_experiment.txt', 'w') as f:
     print(settings, file=f)
 f.close()
 
@@ -89,6 +89,17 @@ elif args.task == 'task_2_tumor_subtyping':
                             label_dict = {'subtype_1':0, 'subtype_2':1, 'subtype_3':2},
                             patient_strat= False,
                             ignore=[])
+
+elif args.task == 'biomarker_ER':
+    args.n_classes = 2
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/train_csv.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/features',
+                                  shuffle=False,
+                                  print_info=True,
+                                  label_col='ER',
+                                  label_dict={'>= 1%': 1, '< 1%': 0},
+                                  patient_strat=False,
+                                  ignore=['Ki67','HER2','PR','Filepath'])
 
 # elif args.task == 'tcga_kidney_cv':
 #     args.n_classes=3
