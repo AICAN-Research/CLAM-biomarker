@@ -13,3 +13,5 @@ notebooks
 *.xlsx
 *.geojson
 *.csv
+*.bin
+.idea
