@@ -9,7 +9,7 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
     adjust weights according to class per sample distribution  
     study can be run with multiple instances if study_name is set to existing name      """
 
-model = 'clam_mb'
+model = 'clam_sb'
 gpu = 0
 size = '256'
 
@@ -107,14 +107,13 @@ def objective(trial):
     drop_out = trial.suggest_float('drop_out', 0.0, 0.5)
     bag_loss = trial.suggest_categorical('bag_loss', ['svm', 'ce'])
     model_type = f'{model}'
-    model_size = trial.suggest_categorical('model_size', ['small', 'big','mini128','miniLayer','microLayer','nanoLayer', 'picoLayer']) # big, small, mini128, miniLayer, microLayer,'nanoLayer', 'picoLayer'
+    model_size = trial.suggest_categorical('model_size', [ 'big','small','miniLayer','microLayer','nanoLayer', 'picoLayer']) # big, small, mini128, miniLayer, microLayer,'nanoLayer', 'picoLayer'
     no_inst_cluster = trial.suggest_categorical('no_inst_cluster', [True, False])
     inst_loss = trial.suggest_categorical('inst_loss', ['svm', 'ce', None])
     bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0)
     B = trial.suggest_categorical('B', [8, 32, 64, 128])
     curr_date, curr_time = get_date_time()
     exp_code = (model_type + curr_date + "_" + curr_time)
-
 
 
     # Setup args namespace

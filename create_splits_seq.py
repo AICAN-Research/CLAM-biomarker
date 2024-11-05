@@ -43,15 +43,15 @@ elif args.task == 'task_2_tumor_subtyping':
 
 elif args.task == 'biomarker_ER':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/Biomarkers/test_patches_ute/train_csv.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/Biomarkers/test_patches_ute/features',
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/train_256.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patches_256/features',
                                   shuffle=False,
                                   seed=args.seed,
                                   print_info=True,
                                   label_col='ER',
-                                  label_dict={'>= 1%': 1, '< 1%': 0},
+                                  label_dict={1: 1, 0: 0}, #label_dict={'>= 1%': 1, '< 1%': 0},
                                   patient_strat=False,
-                                  ignore=['Ki67','HER2','PR','Filepath'])
+                                  ignore=['Ki67','HER2','PR','histological subtype','histological grade'])
 
 else:
     raise NotImplementedError
@@ -65,11 +65,21 @@ if __name__ == '__main__':
         label_fracs = [args.label_frac]
     else:
         label_fracs = [0.1, 0.25, 0.5, 0.75, 1.0]
-    
+
+
+    # test_ids = [497, 634, 875, 1117, 1035, 387, 1663, 1003, 1206, 847, 1400, 291, 1077, 1431, 592, 157, 1472, 1562, 159, 1495, 1542, 1548, 328, 775, 1172, 1583, 486,
+    #             1481, 128, 1145, 641, 706, 1363, 614, 1304, 504, 125, 1148, 914, 218, 1249, 416, 424, 960, 1555, 1093, 236, 405, 1519, 1361, 1123, 336, 897, 1053, 146,
+    #             221, 818, 827, 671, 1161, 1504, 1073, 1339, 187, 1425, 920, 816, 355, 589, 226, 1695, 1221, 913, 13, 563, 381, 101, 724, 1632, 185, 1505, 1193, 1560,
+    #             254, 740, 1687, 111, 1273, 1594, 1438, 431, 590, 457, 325, 1, 737, 463, 845, 825, 120, 833, 1136, 1518, 1597, 649, 513, 534, 204, 295, 1296, 1344, 465,
+    #             1143, 1698, 122, 206, 390, 1429, 7, 722, 388, 954, 1417, 1507, 1654, 251, 129, 370, 536, 107, 1506, 118, 883, 232, 1096, 795, 1215, 63, 955, 586, 1702,
+    #             766, 482, 1090, 929, 743, 323, 1595, 1664, 811, 1754, 1245, 395, 788, 1163, 468, 1491, 50, 234, 1094, 646, 765, 1376, 340, 1630, 1665, 235, 1600, 1369,
+    #             1072, 377, 1006, 1121, 1207, 1233, 931]
+
+
     for lf in label_fracs:
         split_dir = 'splits/'+ str(args.task) + '_{}'.format(int(lf * 100))
         os.makedirs(split_dir, exist_ok=True)
-        dataset.create_splits(k = args.k, val_num = val_num, test_num = test_num, label_frac=lf)
+        dataset.create_splits(k = args.k, val_num = val_num, test_num = test_num, label_frac=lf) # custom_test_ids=test_ids
         for i in range(args.k):
             dataset.set_splits()
             descriptor_df = dataset.test_split_gen(return_descriptor=True)
