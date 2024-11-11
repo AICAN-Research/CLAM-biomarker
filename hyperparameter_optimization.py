@@ -45,8 +45,7 @@ def parse_metrics(log_dir, weights=(0.8, 0.2)):
             # Compute the weighted mean
             weighted_mean = (weights[0] * latest_class_0_acc +
                              weights[1] * latest_class_1_acc)
-            if len(event_accumulator.Scalars('val/loss')) > 102:
-                weighted_mean += 1
+
 
             # Update the best weighted mean
             if weighted_mean > best_weighted_mean:
@@ -112,7 +111,7 @@ def objective(trial):
     no_inst_cluster = trial.suggest_categorical('no_inst_cluster', [True, False])
     inst_loss = trial.suggest_categorical('inst_loss', ['svm', 'ce', None])
     bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0)
-    B = trial.suggest_categorical('B', [4, 8, 32, 64, 128])
+    B = trial.suggest_categorical('B', [4, 8, 16, 32, 64])
     curr_date, curr_time = get_date_time()
     exp_code = (model_type + curr_date + "_" + curr_time)
 
@@ -137,8 +136,8 @@ def objective(trial):
 
 if __name__ == "__main__":
     curr_date, _ = get_date_time()
-    study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name=("clam_mb_256_big_" + curr_date), load_if_exists=True)
-    # study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name='clam_mb_256_big', load_if_exists=True)
+    study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name=(model+"_256_big_" + curr_date), load_if_exists=True)
+    # study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name='', load_if_exists=True)
     study.optimize(objective, n_trials=100)
 
     # Print the best found parameters

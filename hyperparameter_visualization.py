@@ -48,8 +48,8 @@ def parse_metrics(log_dir, weights=(0.8, 0.2)):
         event_accumulator = EventAccumulator(event_file)
         event_accumulator.Reload()
 
-        if len(event_accumulator.Scalars('val/loss')) > 102:
-        # if True:
+        # if len(event_accumulator.Scalars('val/loss')) > 102:
+        if True:
             delete = False
 
 
@@ -142,24 +142,24 @@ if __name__ == "__main__":
 
     ''' Show top 10 experiments '''
 
-    # root_dir = Path(r'/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/256')
-    # data = []
-    #
-    # for folder in Path(root_dir).iterdir():
-    #     try:
-    #         weighted_mean =parse_metrics(folder,weights=(0.8, 0.2) )
-    #         # print(f'{folder.stem} has weighted mean : {weighted_mean}' )
-    #         data.append({'folder_name': folder.stem, 'weighted_mean': weighted_mean})
-    #     except:
-    #         continue
-    #
-    # df = pd.DataFrame(data)
-    # top_10 = df.nlargest(30, 'weighted_mean')
-    # pd.set_option('display.max_rows', None)
-    # print(top_10)
+    root_dir = Path(r'/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/1024')
+    data = []
+
+    for folder in Path(root_dir).iterdir():
+        try:
+            weighted_mean =parse_metrics(folder,weights=(0.8, 0.2) )
+            # print(f'{folder.stem} has weighted mean : {weighted_mean}' )
+            data.append({'folder_name': folder.stem, 'weighted_mean': weighted_mean})
+        except:
+            continue
+
+    df = pd.DataFrame(data)
+    top_10 = df.nlargest(30, 'weighted_mean')
+    pd.set_option('display.max_rows', None)
+    print(top_10)
 
     ''' Caclculate mean and standard deviation of selected model'''
-    root_dir = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/256/clam_sb220924_082605_s1'
-    final_scores(root_dir)
+    # root_dir = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/256/clam_sb220924_082605_s1'
+    # final_scores(root_dir)
 
 
