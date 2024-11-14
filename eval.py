@@ -92,14 +92,14 @@ elif args.task == 'task_2_tumor_subtyping':
 
 elif args.task == 'biomarker_ER':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/train_csv.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/features',
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/train_1024.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',
-                                  label_dict={'>= 1%': 1, '< 1%': 0},
+                                  label_dict={1: 1, 0: 0},
                                   patient_strat=False,
-                                  ignore=['Ki67','HER2','PR','Filepath'])
+                                  ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 
 # elif args.task == 'tcga_kidney_cv':
 #     args.n_classes=3
@@ -128,6 +128,7 @@ if args.fold == -1:
 else:
     folds = range(args.fold, args.fold+1)
 ckpt_paths = [os.path.join(args.models_dir, 's_{}_checkpoint.pt'.format(fold)) for fold in folds]
+# ckpt_paths = os.path.join(args.models_dir, 'averaged_model.pt')
 datasets_id = {'train': 0, 'val': 1, 'test': 2, 'all': -1}
 
 if __name__ == "__main__":
@@ -142,6 +143,7 @@ if __name__ == "__main__":
             datasets = dataset.return_splits(from_id=False, csv_path=csv_path)
             split_dataset = datasets[datasets_id[args.split]]
         model, patient_results, test_error, auc, df  = eval(split_dataset, args, ckpt_paths[ckpt_idx])
+        # model, patient_results, test_error, auc, df = eval(split_dataset, args, ckpt_paths)
         all_results.append(all_results)
         all_auc.append(auc)
         all_acc.append(1-test_error)
