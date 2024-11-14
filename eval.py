@@ -152,10 +152,10 @@ if __name__ == "__main__":
 
         class_accuracies = {}
         for cls in df['Y'].unique():  # Loop through each class
-            # Filter rows belonging to the current class
             class_data = df[df['Y'] == cls]
-            # Calculate accuracy for the current class
-            accuracy = (class_data['Y'] == class_data['Y_hat']).mean()
+            correct = (class_data['Y'] == class_data['Y_hat']).sum()
+            total = class_data.shape[0]
+            accuracy = correct / total
             class_accuracies[cls] = accuracy
         all_acc_0.append(class_accuracies[0.0])
         all_acc_1.append(class_accuracies[1.0])
