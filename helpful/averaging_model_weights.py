@@ -4,16 +4,16 @@ from utils.eval_utils import initiate_model
 
 # Define the arguments required for initiating the model
 class Args:
-    drop_out = 0.3027394988634319  # Example value; replace with the correct value
+    drop_out =  0.06813855689777648  # Example value; replace with the correct value
     n_classes = 2   # Example value; replace with the correct value
     embed_dim = 1024  # Example value; replace with the correct value
-    model_size = "miniLayer"  # Example value; replace with the correct value
+    model_size = "big"  # Example value; replace with the correct value
     model_type = "clam_mb"  # Example: "clam_sb", "clam_mb", or "mil"
 
 args = Args()
 
 # Directory containing checkpoint files
-path_to_checkpoint_dir = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/1024/clam_mb141124_052342_s1'
+path_to_checkpoint_dir = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/1024/clam_mb131124_050616_s1'
 
 # List of checkpoint files (ensure they exist in the specified directory)
 checkpoint_files = [

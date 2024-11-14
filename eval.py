@@ -128,13 +128,15 @@ if args.fold == -1:
 else:
     folds = range(args.fold, args.fold+1)
 ckpt_paths = [os.path.join(args.models_dir, 's_{}_checkpoint.pt'.format(fold)) for fold in folds]
-# ckpt_paths = os.path.join(args.models_dir, 'averaged_model.pt')
+# ckpt_paths = [os.path.join(args.models_dir, 'averaged_model.pt')]
 datasets_id = {'train': 0, 'val': 1, 'test': 2, 'all': -1}
 
 if __name__ == "__main__":
     all_results = []
     all_auc = []
     all_acc = []
+    all_acc_0 = []
+    all_acc_1 = []
     for ckpt_idx in range(len(ckpt_paths)):
         if datasets_id[args.split] < 0:
             split_dataset = dataset
@@ -143,13 +145,23 @@ if __name__ == "__main__":
             datasets = dataset.return_splits(from_id=False, csv_path=csv_path)
             split_dataset = datasets[datasets_id[args.split]]
         model, patient_results, test_error, auc, df  = eval(split_dataset, args, ckpt_paths[ckpt_idx])
-        # model, patient_results, test_error, auc, df = eval(split_dataset, args, ckpt_paths)
         all_results.append(all_results)
         all_auc.append(auc)
         all_acc.append(1-test_error)
         df.to_csv(os.path.join(args.save_dir, 'fold_{}.csv'.format(folds[ckpt_idx])), index=False)
 
-    final_df = pd.DataFrame({'folds': folds, 'test_auc': all_auc, 'test_acc': all_acc})
+        class_accuracies = {}
+        for cls in df['Y'].unique():  # Loop through each class
+            # Filter rows belonging to the current class
+            class_data = df[df['Y'] == cls]
+            # Calculate accuracy for the current class
+            accuracy = (class_data['Y'] == class_data['Y_hat']).mean()
+            class_accuracies[cls] = accuracy
+        all_acc_0.append(class_accuracies[0.0])
+        all_acc_1.append(class_accuracies[1.0])
+
+
+    final_df = pd.DataFrame({'folds': folds, 'test_auc': all_auc, 'test_acc': all_acc, 'acc_0':all_acc_0, 'acc_1':all_acc_1})
     if len(folds) != args.k:
         save_name = 'summary_partial_{}_{}.csv'.format(folds[0], folds[-1])
     else:
