@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Folder containing the CSV files
-folder_path = '/home/utes/workspace/CLAM/splits/biomarker_ER_100'
+folder_path = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/biomarker_ER_100'
 
 # File pattern for the split files (from 0 to 9)
 file_pattern = 'splits_{}.csv'

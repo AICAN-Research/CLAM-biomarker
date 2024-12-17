@@ -8,10 +8,11 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
 """ before running : check available GPU , set model_type, set task(in main.py default=), 
     adjust weights according to class per sample distribution  
     study can be run with multiple instances if study_name is set to existing name      """
-
-model = 'clam_sb'
 gpu = 0
+model = 'clam_sb'
 size = '256'
+model_size = 'picoLayer'
+# [ 'big','small','miniLayer','microLayer','nanoLayer', 'picoLayer']
 
 def get_date_time():
     curr_date = "".join(date.today().strftime("%d/%m").split("/")) + date.today().strftime("%Y")[2:]
@@ -69,6 +70,7 @@ def run_training_script(args):
         "--model_size", str(args.model_size),
         "--bag_weight", str(args.bag_weight),
         "--B", str(args.B),
+        "--task", str(args.task),
         "--log_data",
         "--weighted_sample",
         "--early_stopping",
@@ -103,23 +105,25 @@ def objective(trial):
     lr = trial.suggest_float('lr', 1e-5, 1e-3, log=True)
     reg = trial.suggest_float('reg', 1e-6, 1e-4, log=True)
     opt = trial.suggest_categorical('opt', ['adam', 'sgd'])
-    drop_out = trial.suggest_float('drop_out', 0.0, 0.5)
+    drop_out = trial.suggest_float('drop_out', 0.0, 0.5,step=0.05)
     bag_loss = trial.suggest_categorical('bag_loss', ['svm', 'ce'])
-    model_type = f'{model}'
     # model_size = trial.suggest_categorical('model_size', [ 'big','small','miniLayer','microLayer','nanoLayer', 'picoLayer']) # big, small, mini128, miniLayer, microLayer,'nanoLayer', 'picoLayer'
-    model_size = 'big'
+    if size == '256':
+        task = 'biomarker_ER_256'
+    if size == '1024':
+        task = 'biomarker_ER_1024'
     no_inst_cluster = trial.suggest_categorical('no_inst_cluster', [True, False])
     inst_loss = trial.suggest_categorical('inst_loss', ['svm', 'ce', None])
-    bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0)
-    B = trial.suggest_categorical('B', [4, 8, 16, 32, 64])
+    bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0,step=0.05)
+    B = trial.suggest_categorical('B', [4, 8, 16, 32, 64,128,256])
     curr_date, curr_time = get_date_time()
-    exp_code = (model_type + curr_date + "_" + curr_time)
+    exp_code = (model + curr_date + "_" + curr_time)
 
 
     # Setup args namespace
     args = argparse.Namespace(lr=lr, reg=reg, opt=opt, drop_out=drop_out, bag_loss=bag_loss,
-                              model_type=model_type, model_size=model_size, no_inst_cluster=no_inst_cluster,
-                              inst_loss=inst_loss, bag_weight=bag_weight, B=B, exp_code=exp_code)
+                              model_type=model, model_size=model_size, no_inst_cluster=no_inst_cluster,
+                              inst_loss=inst_loss, bag_weight=bag_weight, B=B, exp_code=exp_code, task=task)
 
 
     # Define the log directory for TensorBoard logs
@@ -136,9 +140,9 @@ def objective(trial):
 
 if __name__ == "__main__":
     curr_date, _ = get_date_time()
-    study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name=(model+"_256_big_" + curr_date), load_if_exists=True)
+    study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name=(model+'_'+size+'_'+model_size+'_'+ curr_date), load_if_exists=True)
     # study = optuna.create_study(direction="maximize", storage="sqlite:///example.db",study_name='', load_if_exists=True)
-    study.optimize(objective, n_trials=100)
+    study.optimize(objective, n_trials=70)
 
     # Print the best found parameters
     print("Best trial:")

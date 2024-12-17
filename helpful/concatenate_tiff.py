@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 import fast
 
 
-tiff_folder = '/mnt/EncryptedDisk2/BreastData/Studies/Biomarkers/export_cores'
-destination_folder = '/mnt/EncryptedDisk2/BreastData/Studies/Biomarkers/export_triplets'
+tiff_folder = '/mnt/EncryptedDisk2/BreastData/Studies/Biomarkers/export_cores_HUS_Maren'
+destination_folder = '/mnt/EncryptedDisk2/BreastData/Studies/Biomarkers/export_triplets_HUS'
+
 
 # Initialize a dictionary to hold the grouped file names
 grouped_files = {}
