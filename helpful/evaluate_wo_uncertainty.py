@@ -52,7 +52,7 @@ for model in models:
 
         # Filter rows explicitly using .loc
         filtered_data = data.loc[
-            ~((data['p_0'].between(0.4, 0.6))  (data['p_1'].between(0.4, 0.6)))
+            ~((data['p_0'].between(0.4, 0.6)) & (data['p_1'].between(0.4, 0.6)))
         ]
 
         # Count remaining entries per class
