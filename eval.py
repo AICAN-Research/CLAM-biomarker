@@ -39,7 +39,7 @@ parser.add_argument('--fold', type=int, default=-1, help='single fold to evaluat
 parser.add_argument('--micro_average', action='store_true', default=False, 
                     help='use micro_average instead of macro_avearge for multiclass AUC')
 parser.add_argument('--split', type=str, choices=['train', 'val', 'test', 'all'], default='test')
-parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping', 'biomarker_ER_256','biomarker_ER_1024'])
+parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping', 'biomarker_ER_256','biomarker_ER_1024','biomarker_ER_HUS_256','biomarker_ER_HUS_1024','biomarker_ER_2048'])
 parser.add_argument('--drop_out', type=float, default=0.25, help='dropout')
 parser.add_argument('--embed_dim', type=int, default=1024)
 args = parser.parse_args()
@@ -112,16 +112,36 @@ elif args.task == 'biomarker_ER_1024':
                                   patient_strat=False,
                                   ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 
-# elif args.task == 'tcga_kidney_cv':
-#     args.n_classes=3
-#     dataset = Generic_MIL_Dataset(csv_path = 'dataset_csv/tcga_kidney_clean.csv',
-#                             data_dir= os.path.join(args.data_root_dir, 'tcga_kidney_20x_features'),
-#                             shuffle = False, 
-#                             print_info = True,
-#                             label_dict = {'TCGA-KICH':0, 'TCGA-KIRC':1, 'TCGA-KIRP':2},
-#                             patient_strat= False,
-#                             ignore=['TCGA-SARC'])
-
+elif args.task == 'biomarker_ER_HUS_1024':
+    args.n_classes = 2
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024_HUS/train_1024_HUS.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024_HUS/features',
+                                  shuffle=False,
+                                  print_info=True,
+                                  label_col='ER',
+                                  label_dict={1: 1, 0: 0},
+                                  patient_strat=False,
+                                  ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
+elif args.task == 'biomarker_ER_HUS_256':
+    args.n_classes = 2
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256_HUS/train_256_HUS.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256_HUS/features',
+                                  shuffle=False,
+                                  print_info=True,
+                                  label_col='ER',
+                                  label_dict={1: 1, 0: 0},
+                                  patient_strat=False,
+                                  ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
+elif args.task == 'biomarker_ER_2048':
+    args.n_classes = 2
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/train_2048.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/features',
+                                  shuffle=False,
+                                  print_info=True,
+                                  label_col='ER',
+                                  label_dict={1: 1, 0: 0},
+                                  patient_strat=False,
+                                  ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 else:
     raise NotImplementedError
 

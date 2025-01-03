@@ -99,7 +99,7 @@ parser.add_argument('--model_type', type=str, choices=['clam_sb', 'clam_mb', 'mi
 parser.add_argument('--exp_code', type=str, help='experiment code for saving results')
 parser.add_argument('--weighted_sample', action='store_true', default=False, help='enable weighted sampling')
 parser.add_argument('--model_size', type=str, choices=['small', 'big','mini128','miniLayer','microLayer','nanoLayer', 'picoLayer'], default='small', help='size of model, does not affect mil')
-parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping','biomarker_ER_256','biomarker_ER_1024'])
+parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping','biomarker_ER_256','biomarker_ER_1024','biomarker_ER_2048'])
 ### CLAM specific options
 parser.add_argument('--no_inst_cluster', action='store_true', default=False,
                      help='disable instance-level clustering')
@@ -196,6 +196,18 @@ elif args.task == 'biomarker_ER_1024':
     dataset = Generic_MIL_Dataset(
                             csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/train_1024.csv',
                             data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/features',
+                            shuffle=False,
+                            seed=args.seed,
+                            print_info=True,
+                            label_col='ER',
+                            label_dict={1: 1, 0: 0},
+                            patient_strat=False,
+                            ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
+elif args.task == 'biomarker_ER_2048':
+    args.n_classes = 2
+    dataset = Generic_MIL_Dataset(
+                            csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/train_2048.csv',
+                            data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/features',
                             shuffle=False,
                             seed=args.seed,
                             print_info=True,
