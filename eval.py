@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from dataset_modules.dataset_generic import Generic_WSI_Classification_Dataset, Generic_MIL_Dataset, save_splits
 import h5py
 from utils.eval_utils import *
+from utils.file_utils import save_pkl
 
 # Training settings
 parser = argparse.ArgumentParser(description='CLAM Evaluation Script')
@@ -39,7 +40,7 @@ parser.add_argument('--fold', type=int, default=-1, help='single fold to evaluat
 parser.add_argument('--micro_average', action='store_true', default=False, 
                     help='use micro_average instead of macro_avearge for multiclass AUC')
 parser.add_argument('--split', type=str, choices=['train', 'val', 'test', 'all'], default='test')
-parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping', 'biomarker_ER_256','biomarker_ER_1024','biomarker_ER_HUS_256','biomarker_ER_HUS_1024','biomarker_ER_2048'])
+parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping', 'biomarker_ER_256','biomarker_ER_1024','biomarker_ER_HUS_256','biomarker_ER_HUS_1024','biomarker_ER_2048','biomarker_ER_HUS_2048'])
 parser.add_argument('--drop_out', type=float, default=0.25, help='dropout')
 parser.add_argument('--embed_dim', type=int, default=1024)
 args = parser.parse_args()
@@ -142,6 +143,16 @@ elif args.task == 'biomarker_ER_2048':
                                   label_dict={1: 1, 0: 0},
                                   patient_strat=False,
                                   ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
+elif args.task == 'biomarker_ER_HUS_2048':
+    args.n_classes = 2
+    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048_HUS/train_2048_HUS.csv',
+                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048_HUS/features',
+                                  shuffle=False,
+                                  print_info=True,
+                                  label_col='ER',
+                                  label_dict={1: 1, 0: 0},
+                                  patient_strat=False,
+                                  ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 else:
     raise NotImplementedError
 
@@ -198,3 +209,11 @@ if __name__ == "__main__":
     else:
         save_name = 'summary.csv'
     final_df.to_csv(os.path.join(args.save_dir, save_name))
+
+    try:
+
+        if patient_results['features']:
+            filename = os.path.join(args.save_dir, 'feature_results.pkl')
+            save_pkl(filename, patient_results)
+    except Exception as e:
+        print(f"No slide level features saved")

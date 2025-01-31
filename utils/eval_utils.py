@@ -80,8 +80,10 @@ def summary(model, loader, args):
         all_probs[batch_idx] = probs
         all_labels[batch_idx] = label.item()
         all_preds[batch_idx] = Y_hat.item()
-        
-        patient_results.update({slide_id: {'slide_id': np.array(slide_id), 'prob': probs, 'label': label.item()}})
+        try:
+            patient_results.update({slide_id: {'slide_id': np.array(slide_id), 'prob': probs, 'label': label.item(), 'features': results_dict['features'].cpu().numpy() }})
+        except Exception as e:
+            patient_results.update({slide_id: {'slide_id': np.array(slide_id), 'prob': probs, 'label': label.item()}})
         
         error = calculate_error(Y_hat, label)
         test_error += error
