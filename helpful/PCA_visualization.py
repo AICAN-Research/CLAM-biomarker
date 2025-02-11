@@ -89,9 +89,9 @@ def match_slide_id_and_label(patient_results, csv_data, subtype_csv, dataset_lab
 
     return pd.DataFrame(data)
 # Match data for both datasets
-df1 = match_slide_id_and_label(patient_results_set1, csv_set1, csv_subtype_testset1, 'Testset1')
-df2 = match_slide_id_and_label(patient_results_HUS, csv_HUS, csv_subtype_HUS, 'HUS')
-df3 = match_slide_id_and_label(patient_results_complete, csv_complete, csv_subtype_testset1, 'Train and Validation')
+df1 = match_slide_id_and_label(patient_results_set1, csv_set1, csv_subtype_testset1, 'Internal test set')
+df2 = match_slide_id_and_label(patient_results_HUS, csv_HUS, csv_subtype_HUS, 'External test set')
+df3 = match_slide_id_and_label(patient_results_complete, csv_complete, csv_subtype_testset1, 'Train and validation set')
 df3_exclusive = df3[~df3['slide_id'].isin(df1['slide_id'])].copy()
 
 
@@ -130,7 +130,7 @@ def plot_pca(df, title):
         color = 'red' if row['label'] == 1 else 'blue'
 
         # Determine marker shape based on dataset
-        marker = 'o' if row['dataset'] == 'Testset1' else '^'
+        marker = 'o' if row['dataset'] == 'Internal test set' else '^'
 
         # Determine edge color based on prediction correctness
         edge_color = 'green' if row['label'] == row['prediction'] else 'black'
@@ -145,8 +145,8 @@ def plot_pca(df, title):
     plt.scatter([], [], c='white', marker='s', edgecolor='green', label='Correct prediction'),  # Green edge for correct
     plt.scatter([], [], c='white', marker='s', edgecolor='black',
                 label='Incorrect prediction'),  # Black edge for incorrect
-    plt.scatter([], [], c='black', marker='o', label='Testset 1 '),  # Circle for Testset 1
-    plt.scatter([], [], c='black', marker='^', label='HUS ')  # Triangle for HUS
+    plt.scatter([], [], c='black', marker='o', label='Internal test set '),  # Circle for Testset 1
+    plt.scatter([], [], c='black', marker='^', label='External test set ')  # Triangle for HUS
 
     plt.legend(loc='upper left')
     plt.title(title)
@@ -185,7 +185,7 @@ def plot_pca_train(df, title):
 def plot_pca_by_subtype(df, title="PCA Projection by Subtype"):
     plt.figure(figsize=(12, 8))
 
-    marker_map = {'Testset1': 'o', 'HUS': '^', 'Train and Validation': 'o'}  # Define markers per dataset
+    marker_map = {'Internal test set': 'o', 'External test set': '^', 'Train and validation set': 'o'}  # Define markers per dataset
 
     # Get unique subtypes and set a consistent color palette
     palette = sns.color_palette("Set1", n_colors=df['subtype'].nunique())
@@ -228,7 +228,7 @@ def plot_pca_by_subtype(df, title="PCA Projection by Subtype"):
 def plot_pca_by_grade(df, title="PCA Projection by Grade"):
     plt.figure(figsize=(12, 8))
 
-    marker_map = {'Testset1': 'o', 'HUS': '^', 'Train and Validation': 'o'}  # Define markers per dataset
+    marker_map = {'Internal test set': 'o', 'External test set': '^', 'Train and validation set': 'o'}  # Define markers per dataset
 
     # Get unique subtypes and set a consistent color palette
     palette = sns.color_palette("Set1", n_colors=df['grade'].nunique())
@@ -269,10 +269,10 @@ def plot_pca_by_grade(df, title="PCA Projection by Grade"):
 
 
 
-plot_pca_train(df3_exclusive, 'PCA of Feature Vectors Train and Val')
-plot_pca(combined_df, 'PCA of Feature Vectors Testset1 and HUS')
-plot_pca_by_subtype(df3_exclusive, 'PCA of Feature Vectors Train and Val')
-plot_pca_by_subtype(combined_df, 'PCA of Feature Vectors Testset1 and HUS')
-plot_pca_by_grade(df3_exclusive, 'PCA of Feature Vectors Train and Val')
-plot_pca_by_grade(combined_df, 'PCA of Feature Vectors Testset1 and HUS')
+plot_pca_train(df3_exclusive, 'PCA of Feature Vectors Train and Validation set')
+plot_pca(combined_df, 'PCA of Feature Vectors Internal and External test set')
+plot_pca_by_subtype(df3_exclusive, 'PCA of Feature Vectors Train and Validation set')
+plot_pca_by_subtype(combined_df, 'PCA of Feature Vectors internal and external test set')
+plot_pca_by_grade(df3_exclusive, 'PCA of Feature Vectors Train and Validation set')
+plot_pca_by_grade(combined_df, 'PCA of Feature Vectors internal and external test set')
 

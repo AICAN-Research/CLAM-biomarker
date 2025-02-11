@@ -112,6 +112,8 @@ def objective(trial):
         task = 'biomarker_ER_256'
     if size == '1024':
         task = 'biomarker_ER_1024'
+    if size == '2048':
+        task = 'biomarker_ER_2048'
     no_inst_cluster = trial.suggest_categorical('no_inst_cluster', [True, False])
     inst_loss = trial.suggest_categorical('inst_loss', ['svm', 'ce', None])
     bag_weight = trial.suggest_float('bag_weight', 0.5, 1.0,step=0.05)
