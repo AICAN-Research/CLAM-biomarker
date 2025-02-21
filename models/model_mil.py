@@ -44,7 +44,7 @@ class MIL_fc_mc(nn.Module):
         self.n_classes = n_classes
         assert self.top_k == 1
     
-    def forward(self, h, return_features=False):       
+    def forward(self, h, return_features=False):
         h = self.fc(h)
         logits = self.classifiers(h)
 

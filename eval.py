@@ -93,8 +93,8 @@ elif args.task == 'task_2_tumor_subtyping':
 
 elif args.task == 'biomarker_ER_256':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/train_256.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/features',
+    dataset = Generic_MIL_Dataset(csv_path='/.../CLAM/patchsize_256/train_256.csv',
+                                  data_dir='/.../CLAM/patchsize_256/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',
@@ -104,8 +104,8 @@ elif args.task == 'biomarker_ER_256':
 
 elif args.task == 'biomarker_ER_1024':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/train_1024.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/features',
+    dataset = Generic_MIL_Dataset(csv_path='/.../CLAM/patchsize_1024/train_1024.csv',
+                                  data_dir='/.../CLAM/patchsize_1024/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',
@@ -115,8 +115,8 @@ elif args.task == 'biomarker_ER_1024':
 
 elif args.task == 'biomarker_ER_HUS_1024':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024_HUS/train_1024_HUS.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024_HUS/features',
+    dataset = Generic_MIL_Dataset(csv_path='/.../CLAM/patchsize_1024_HUS/train_1024_HUS.csv',
+                                  data_dir='/.../CLAM/patchsize_1024_HUS/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',
@@ -125,8 +125,8 @@ elif args.task == 'biomarker_ER_HUS_1024':
                                   ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 elif args.task == 'biomarker_ER_HUS_256':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256_HUS/train_256_HUS.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256_HUS/features',
+    dataset = Generic_MIL_Dataset(csv_path='/.../CLAM/patchsize_256_HUS/train_256_HUS.csv',
+                                  data_dir='/.../CLAM/patchsize_256_HUS/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',
@@ -135,8 +135,8 @@ elif args.task == 'biomarker_ER_HUS_256':
                                   ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 elif args.task == 'biomarker_ER_2048':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/train_2048.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/features',
+    dataset = Generic_MIL_Dataset(csv_path='/.../CLAM/patchsize_2048/train_2048.csv',
+                                  data_dir='/.../CLAM/patchsize_2048/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',
@@ -145,8 +145,8 @@ elif args.task == 'biomarker_ER_2048':
                                   ignore=['Ki67', 'HER2', 'PR', 'histological subtype', 'histological grade'])
 elif args.task == 'biomarker_ER_HUS_2048':
     args.n_classes = 2
-    dataset = Generic_MIL_Dataset(csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048_HUS/train_2048_HUS.csv',
-                                  data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048_HUS/features',
+    dataset = Generic_MIL_Dataset(csv_path='/.../CLAM/patchsize_2048_HUS/train_2048_HUS.csv',
+                                  data_dir='/.../CLAM/patchsize_2048_HUS/features',
                                   shuffle=False,
                                   print_info=True,
                                   label_col='ER',

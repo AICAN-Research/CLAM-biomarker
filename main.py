@@ -106,7 +106,7 @@ parser.add_argument('--no_inst_cluster', action='store_true', default=False,
 parser.add_argument('--inst_loss', type=str, choices=['svm', 'ce', None], default=None,
                      help='instance-level clustering loss function (default: None)')
 parser.add_argument('--subtyping', action='store_true', default=False, 
-                     help='subtyping problem')
+                     help='subtyping problem') # mutually exclusive
 parser.add_argument('--bag_weight', type=float, default=0.7,
                     help='clam: weight coefficient for bag-level loss (default: 0.7)')
 parser.add_argument('--B', type=int, default=8, help='numbr of positive/negative patches to sample for clam')
@@ -181,8 +181,8 @@ elif args.task == 'task_2_tumor_subtyping':
 elif args.task == 'biomarker_ER_256':
     args.n_classes = 2
     dataset = Generic_MIL_Dataset(
-                            csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/train_256.csv',
-                            data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_256/features',
+                            csv_path='/.../CLAM/patchsize_256/train_256.csv',
+                            data_dir='/.../CLAM/patchsize_256/features',
                             shuffle=False,
                             seed=args.seed,
                             print_info=True,
@@ -194,8 +194,8 @@ elif args.task == 'biomarker_ER_256':
 elif args.task == 'biomarker_ER_1024':
     args.n_classes = 2
     dataset = Generic_MIL_Dataset(
-                            csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/train_1024.csv',
-                            data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_1024/features',
+                            csv_path='/.../CLAM/patchsize_1024/train_1024.csv',
+                            data_dir='/.../CLAM/patchsize_1024/features',
                             shuffle=False,
                             seed=args.seed,
                             print_info=True,
@@ -206,8 +206,8 @@ elif args.task == 'biomarker_ER_1024':
 elif args.task == 'biomarker_ER_2048':
     args.n_classes = 2
     dataset = Generic_MIL_Dataset(
-                            csv_path='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/train_2048.csv',
-                            data_dir='/mnt/EncryptedDisk2/BreastData/Studies/CLAM/patchsize_2048/features',
+                            csv_path='/.../patchsize_2048/train_2048.csv',
+                            data_dir='/.../CLAM/patchsize_2048/features',
                             shuffle=False,
                             seed=args.seed,
                             print_info=True,

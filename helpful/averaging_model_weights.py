@@ -5,39 +5,11 @@ from utils.eval_utils import initiate_model
 import ast
 
 # Directory containing experiments
-results_base_dir = '/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/1024'
+results_base_dir = '/.../results/2048'
 
 # List of experiment names (subdirectories in results_base_dir)
-# experiment_names = [
-#     'clam_sb101224_035019_s1',
-#     'clam_mb261124_065549_s1',
-#     'clam_sb251124_131731_s1',
-#     'clam_mb051224_224656_s1',
-#     'clam_sb281124_004147_s1',
-#     'clam_mb281124_202623_s1',
-#     'clam_sb251124_131829_s1',
-#     'clam_mb271124_120916_s1',
-#     'clam_sb121224_234654_s1',
-#     'clam_mb281124_043602_s1',
-#     'clam_sb101224_010104_s1',
-#     'clam_mb261124_035124_s1'
-# ]
-#1024
-experiment_names = [
-'clam_sb291124_224838_s1' ,
-'clam_mb101224_134421_s1',
-'clam_sb281124_010319_s1',
-'clam_mb271124_152545_s1',
-'clam_sb251124_130735_s1',
-'clam_mb021224_225232_s1',
-'clam_mb291124_064509_s1',
-'clam_sb261124_012250_s1',
-'clam_sb101224_230051_s1',
-'clam_mb121224_205925_s1',
-'clam_sb121224_054755_s1' ,
-'clam_mb261124_171203_s1'
-]
 
+experiment_names = []
 
 def read_experiment_params(exp_dir):
     """

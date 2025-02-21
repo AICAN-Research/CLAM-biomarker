@@ -9,9 +9,9 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
     adjust weights according to class per sample distribution  
     study can be run with multiple instances if study_name is set to existing name      """
 gpu = 0
-model = 'clam_sb'
-size = '256'
-model_size = 'picoLayer'
+model = 'clam_mb'
+size = '2048'
+model_size = 'big'
 # [ 'big','small','miniLayer','microLayer','nanoLayer', 'picoLayer']
 
 def get_date_time():
@@ -74,7 +74,7 @@ def run_training_script(args):
         "--log_data",
         "--weighted_sample",
         "--early_stopping",
-        "--results_dir", f"/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/{size}",
+        "--results_dir", f"/.../CLAM/results/{size}",
 
     ]
 
@@ -129,7 +129,7 @@ def objective(trial):
 
 
     # Define the log directory for TensorBoard logs
-    log_dir = f"/mnt/EncryptedDisk2/BreastData/Studies/CLAM/results/{size}/{exp_code}_s1"
+    log_dir = f"/.../CLAM/results/{size}/{exp_code}_s1"
 
     run_training_script(args)
     metric = parse_metrics(log_dir)
